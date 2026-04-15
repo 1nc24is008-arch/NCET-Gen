@@ -2,7 +2,7 @@ import streamlit as st
 from groq import Groq
 
 # Page Config
-st.set_page_config(page_title="PragyanAI Content Generator", layout="wide")
+st.set_page_config(page_title="Genz_AI", layout="wide")
 
 # Title & Image
 st.title("PragyanAI – Content Generator")
