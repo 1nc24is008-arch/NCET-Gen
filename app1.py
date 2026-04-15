@@ -57,7 +57,7 @@ header, footer {
 st.title("⚡ Genz_AI")
 
 # Initialize client
-client = Groq(api_key=st.secrets["First_project"])
+client = Groq(api_key=st.secrets["app2"])
 
 # Session state for chat
 if "chat" not in st.session_state:
