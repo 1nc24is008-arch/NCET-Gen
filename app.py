@@ -6,7 +6,7 @@ st.set_page_config(page_title="PragyanAI Content Generator", layout="wide")
 
 # Title & Image
 st.title("PragyanAI – Content Generator")
-st.image("The_ghost.jfif")
+st.image("The_ghost.jfif",width=300)
 
 # Initialize Groq Client (API key from Streamlit Secrets)
 client = Groq(api_key=st.secrets["First_project"])
