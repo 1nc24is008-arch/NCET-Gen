@@ -58,7 +58,7 @@ section[data-testid="stSidebar"] {
 """, unsafe_allow_html=True)
 
 # API
-client = Groq(api_key=st.secrets["First_project"])
+client = Groq(api_key=st.secrets["app2"])
 
 # Session state
 if "chat" not in st.session_state:
