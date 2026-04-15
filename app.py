@@ -5,7 +5,7 @@ from groq import Groq
 st.set_page_config(page_title="Genz_AI", layout="wide")
 
 # Title & Image
-st.title("PragyanAI – Content Generator")
+st.title("Genz – Content Generator")
 st.image("The_ghost.jfif",width=300)
 
 # Initialize Groq Client (API key from Streamlit Secrets)
