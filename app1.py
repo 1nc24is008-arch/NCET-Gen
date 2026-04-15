@@ -2,113 +2,142 @@ import streamlit as st
 from groq import Groq
 import time
 
-# Page Config
+# Page config
 st.set_page_config(page_title="Genz_AI", layout="wide")
 
-# 🎨 Dark + Chat UI Styling
+# 🎨 UI Styling
 st.markdown("""
 <style>
 .stApp {
-    background-color: black;
+    background-color: #0b0b0b;
     color: white;
 }
 
+/* Hide header/footer */
 header, footer {
     visibility: hidden;
 }
 
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #111;
+    border-right: 1px solid #222;
+}
+
 /* Chat bubbles */
-.user-msg {
-    background-color: #1a1a1a;
+.user {
+    background: #1f1f1f;
     padding: 12px;
     border-radius: 10px;
-    margin-bottom: 10px;
+    margin: 8px 0;
     text-align: right;
 }
 
-.bot-msg {
-    background-color: #111;
+.bot {
+    background: #141414;
     padding: 12px;
     border-radius: 10px;
-    margin-bottom: 10px;
-    text-align: left;
+    margin: 8px 0;
     border-left: 3px solid red;
 }
 
-/* Inputs */
-.stTextInput>div>div>input {
-    background-color: #111;
-    color: white;
+/* Input */
+.stTextInput input {
+    background-color: #111 !important;
+    color: white !important;
     border-radius: 10px;
 }
 
-/* Button */
-.stButton>button {
+/* Buttons */
+.stButton button {
     background-color: red;
     color: white;
     border-radius: 10px;
-    width: 100%;
-    box-shadow: 0 0 10px red;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.title("⚡ Genz_AI")
+# API
+client = Groq(api_key=st.secrets["First_project"])
 
-# Initialize client
-client = Groq(api_key=st.secrets["app2"])
-
-# Session state for chat
+# Session state
 if "chat" not in st.session_state:
     st.session_state.chat = []
 
-# Mode selection
-mode = st.selectbox("Select Content Type", ["Marketing", "Blog", "Instagram Caption"])
+if "history" not in st.session_state:
+    st.session_state.history = []
 
-# Input
-user_input = st.text_input("Enter your idea...")
+# =====================
+# SIDEBAR
+# =====================
+with st.sidebar:
+    st.title("⚡ Genz_AI")
 
-# Generate button
+    if st.button("➕ New Chat"):
+        st.session_state.chat = []
+
+    st.markdown("### Modes")
+    mode = st.radio("", ["Marketing", "Study", "Project"])
+
+    st.markdown("### History")
+    for item in st.session_state.history[-5:]:
+        st.caption("• " + item)
+
+    st.markdown("---")
+    st.button("⚙️ Account")
+
+# =====================
+# TOP BAR
+# =====================
+col1, col2, col3 = st.columns([8,1,1])
+
+with col2:
+    st.button("🔗 Share")
+
+with col3:
+    st.button("⋮")
+
+# =====================
+# MAIN CHAT
+# =====================
+st.title("⚡ Genz_AI")
+
+user_input = st.text_input("Ask anything...")
+
 if st.button("Generate"):
     if user_input:
-        
-        # Prompt based on mode
+
+        # Prompt
         if mode == "Marketing":
             prompt = f"Write marketing content for: {user_input}"
-        elif mode == "Blog":
-            prompt = f"Write a detailed blog on: {user_input}"
+        elif mode == "Study":
+            prompt = f"Explain this simply: {user_input}"
         else:
-            prompt = f"Write an engaging Instagram caption for: {user_input}"
+            prompt = f"Help me build a project: {user_input}"
 
-        # Save user message
         st.session_state.chat.append(("user", user_input))
+        st.session_state.history.append(user_input)
 
-        with st.spinner("Thinking..."):
-            response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": prompt}]
-            )
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}]
+        )
 
-            reply = response.choices[0].message.content
+        reply = response.choices[0].message.content
 
-            # Typing effect
-            typed = ""
-            placeholder = st.empty()
-            for char in reply:
-                typed += char
-                placeholder.markdown(f"<div class='bot-msg'>{typed}</div>", unsafe_allow_html=True)
-                time.sleep(0.01)
+        # Typing animation
+        typed = ""
+        placeholder = st.empty()
+        for char in reply:
+            typed += char
+            placeholder.markdown(f"<div class='bot'>{typed}</div>", unsafe_allow_html=True)
+            time.sleep(0.003)
 
-            # Save bot reply
-            st.session_state.chat.append(("bot", reply))
+        st.session_state.chat.append(("bot", reply))
 
-    else:
-        st.warning("Enter something first!")
-
-# Display chat history
+# Show chat
 for role, msg in st.session_state.chat:
     if role == "user":
-        st.markdown(f"<div class='user-msg'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='user'>{msg}</div>", unsafe_allow_html=True)
     else:
-        st.markdown(f"<div class='bot-msg'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='bot'>{msg}</div>", unsafe_allow_html=True)
