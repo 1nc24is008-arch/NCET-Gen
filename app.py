@@ -29,14 +29,14 @@ if st.button("Generate Content"):
 
                 text = response.choices[0].message.content
                 st.session_state.text = text
-                st.success("Content generated successfully ✅")
+                st.success("Content generated successfully ")
                 st.write(text)
 
             except Exception as e:
-                st.error("Error generating content ❌")
+                st.error("Error generating content ")
                 st.exception(e)
     else:
-        st.warning("Please enter both Product and Audience ⚠️")
+        st.warning("Please enter both Product and Audience ")
 
 # Show & Download Content
 if "text" in st.session_state:
