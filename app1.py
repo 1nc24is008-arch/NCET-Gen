@@ -25,9 +25,71 @@ st.set_page_config(page_title="Genz_AI", layout="wide")
 # ---------------- STYLE ----------------
 st.markdown("""
 <style>
-body {background-color:#343541;color:white;}
-[data-testid="stSidebar"] {background-color:#202123;}
-.chat-title {font-size:22px;font-weight:bold;}
+.stApp {
+    background-color: #F7F7F8;
+}
+[data-testid="stSidebar"] {
+    background-color: #202123;
+    padding: 20px 10px;
+}
+
+[data-testid="stSidebar"] h1 {
+    color: #FFFFFF;
+}
+
+.stButton>button {
+    width: 100%;
+    border-radius: 8px;
+    background-color: #2A2B32;
+    color: white;
+    border: none;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    background-color: #FF6A00;
+    color: white;
+}
+.active-chat {
+    background-color: #FF6A00 !important;
+    color: white !important;
+}
+
+textarea {
+    border-radius: 10px !important;
+    border: 1px solid #ddd !important;
+}
+
+.chat-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+
+[data-testid="stChatMessage"] {
+    border-radius: 10px;
+    padding: 10px;
+}
+
+[data-testid="stChatMessage"][data-testid*="user"] {
+    background-color: #E8E8E8;
+}
+
+[data-testid="stChatMessage"][data-testid*="assistant"] {
+    background-color: #FFFFFF;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
