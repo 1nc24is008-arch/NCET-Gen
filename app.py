@@ -32,5 +32,5 @@ if "text" in st.session_state:
             file_name="marketing_copy.txt",
             mime="text/plain"
         )
-    else:
+else:
         st.info("Generate content first")
