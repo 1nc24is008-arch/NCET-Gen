@@ -21,62 +21,52 @@ def save_chats(chats):
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Genz_AI", layout="wide")
 
-# ---------------- PROFESSIONAL CSS ----------------
+# ---------------- CHATGPT STYLE CSS ----------------
 st.markdown("""
 <style>
 
-/* MAIN */
+/* MAIN BACKGROUND */
 .stApp {
-    background-color: #F9FAFB;
+    background-color: #343541;
 }
 
 /* SIDEBAR */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #111827, #0B0F19);
-    padding: 20px 12px;
-    border-right: 1px solid rgba(255,255,255,0.05);
+    background-color: #202123;
+    padding: 15px;
 }
 
-/* TITLE */
-[data-testid="stSidebar"] h1 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #F9FAFB;
-}
-
-/* SECTION */
-[data-testid="stSidebar"] h3 {
-    font-size: 12px;
-    color: #9CA3AF;
-    text-transform: uppercase;
-}
-
-/* BUTTON */
+/* BUTTONS */
 .stButton > button {
-    width: 100%;
-    border-radius: 10px;
-    background: #1F2937;
-    color: #E5E7EB;
+    background: transparent;
+    color: #ECECF1;
     border: none;
-    padding: 10px;
     text-align: left;
-    transition: 0.2s;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
+/* HOVER */
 .stButton > button:hover {
-    background: #374151;
-    transform: translateX(2px);
+    background-color: #2A2B32;
 }
 
-/* NEW CHAT BUTTON */
-.stButton:first-child > button {
-    background: linear-gradient(135deg, #2563EB, #1D4ED8);
-    color: white;
-    text-align: center;
+/* ACTIVE CHAT */
+.stButton > button:focus {
+    background-color: #343541 !important;
 }
 
-.stButton:first-child > button:hover {
-    background: linear-gradient(135deg, #1D4ED8, #1E40AF);
+/* INPUT BOX */
+input {
+    background-color: #2A2B32 !important;
+    color: white !important;
+    border-radius: 8px !important;
+}
+
+/* HEADINGS */
+h2, h3 {
+    color: #9CA3AF !important;
 }
 
 /* CHAT AREA */
@@ -86,16 +76,15 @@ st.markdown("""
     padding-bottom: 120px;
 }
 
-/* INPUT */
+/* INPUT FIX */
 section[data-testid="stChatInput"] {
     position: fixed;
     bottom: 10px;
-    left: 300px;
+    left: 280px;
     right: 20px;
-    background: white;
+    background: #40414F;
     padding: 10px;
     border-radius: 12px;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
 }
 
 </style>
@@ -124,49 +113,42 @@ if "current_chat" not in st.session_state:
 
 # ---------------- SIDEBAR ----------------
 with st.sidebar:
-    st.markdown("### 🤖 Genz_AI")
-    st.caption("Your AI Assistant")
 
-    if st.button("➕ New Chat"):
+    st.markdown("## 🤖 Genz_AI")
+
+    # NEW CHAT
+    if st.button("➕ New chat", use_container_width=True):
         chat_id = str(uuid.uuid4())
         st.session_state.chats[chat_id] = {"name": "New Chat", "messages": []}
         st.session_state.current_chat = chat_id
         save_chats(st.session_state.chats)
         st.rerun()
 
-    st.markdown("### Your Chats")
+    # SEARCH
+    st.markdown("### 🔍 Search chats")
+    search = st.text_input("", placeholder="Search...", label_visibility="collapsed")
 
-    for chat_id, chat_data in list(st.session_state.chats.items()):
-        col1, col2, col3 = st.columns([6,1,1])
+    st.markdown("---")
+    st.markdown("### Recents")
 
-        # SELECT
-        with col1:
-            if st.button(chat_data["name"], key=f"chat_{chat_id}"):
-                st.session_state.current_chat = chat_id
-                st.rerun()
+    # CHAT LIST
+    for chat_id, chat_data in st.session_state.chats.items():
 
-        # RENAME FIX
-        if f"rename_{chat_id}" not in st.session_state:
-            st.session_state[f"rename_{chat_id}"] = False
+        if search and search.lower() not in chat_data["name"].lower():
+            continue
 
-        with col2:
-            if st.button("✏️", key=f"rename_btn_{chat_id}"):
-                st.session_state[f"rename_{chat_id}"] = True
+        if st.button(chat_data["name"], key=f"chat_{chat_id}", use_container_width=True):
+            st.session_state.current_chat = chat_id
+            st.rerun()
 
-        with col3:
-            if st.button("❌", key=f"del_{chat_id}"):
-                del st.session_state.chats[chat_id]
-                save_chats(st.session_state.chats)
-                st.rerun()
+    st.markdown("---")
 
-        if st.session_state[f"rename_{chat_id}"]:
-            new_name = st.text_input("Rename", key=f"text_{chat_id}")
-            if st.button("Save", key=f"save_{chat_id}"):
-                if new_name:
-                    st.session_state.chats[chat_id]["name"] = new_name
-                    st.session_state[f"rename_{chat_id}"] = False
-                    save_chats(st.session_state.chats)
-                    st.rerun()
+    # PROFILE
+    st.markdown("### 👤 Profile")
+    st.markdown("**CHANDAN KUMAR**")
+    st.caption("Free Plan")
+
+    st.button("⚙️ Settings", use_container_width=True)
 
 # ---------------- MAIN ----------------
 current_chat = st.session_state.current_chat
@@ -182,11 +164,11 @@ for msg in messages:
         st.markdown(msg["content"])
 
 # ---------------- INPUT ----------------
-user_input = st.chat_input("Type your message...")
+user_input = st.chat_input("Ask anything...")
 
 SYSTEM_PROMPT = {
     "role": "system",
-    "content": "You are Genz_AI, a smart and helpful assistant."
+    "content": "You are Genz_AI, a helpful and smart assistant."
 }
 
 if user_input:
@@ -205,7 +187,7 @@ if user_input:
             full_response = ""
 
             try:
-                # MEMORY LIMIT
+                # LIMIT MEMORY
                 MAX_MESSAGES = 15
                 limited_messages = messages[-MAX_MESSAGES:]
 
