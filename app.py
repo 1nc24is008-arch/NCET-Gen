@@ -1,52 +1,52 @@
 import streamlit as st
-from groq import Groq
+import replicate
+import os
 
 # Page Config
-st.set_page_config(page_title="Genz_AI", layout="wide")
+st.set_page_config(page_title="Genz Image AI", layout="centered")
 
-# Title & Image
-st.title("Genz – Content Generator")
-st.image("The_ghost.jfif",width=300)
+st.title("🖼️ Genz – AI Image Generator")
 
-# Initialize Groq Client (API key from Streamlit Secrets)
-client = Groq(api_key=st.secrets["First_project"])
+# Set Replicate API Key
+os.environ["REPLICATE_API_TOKEN"] = st.secrets["app2"]
 
-# Inputs
-product = st.text_input("Product")
-audience = st.text_input("Audience")
+# Input prompt
+prompt = st.text_area("Enter your image prompt")
 
-# Generate Content
-if st.button("Generate Content"):
-    if product and audience:
-        with st.spinner("Generating content... ⏳"):
-            prompt = f"Write marketing content for {product} targeting {audience}."
+# Generate Image Function
+def generate_image(prompt):
+    output = replicate.run(
+        "stability-ai/sdxl:latest",
+        input={
+            "prompt": prompt,
+            "width": 1024,
+            "height": 1024
+        }
+    )
+    return output[0]   # returns image URL
 
+# Button
+if st.button("Generate Image"):
+    if prompt:
+        with st.spinner("Generating image... 🎨"):
             try:
-                response = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
-                    messages=[{"role": "user", "content": prompt}]
-                )
+                img_url = generate_image(prompt)
 
-                text = response.choices[0].message.content
-                st.session_state.text = text
-                st.success("Content generated successfully ")
-                st.write(text)
+                st.image(img_url, caption="Generated Image", use_column_width=True)
+
+                # Save in session
+                st.session_state.image = img_url
+
+                st.success("Image generated successfully ✅")
 
             except Exception as e:
-                st.error("Error generating content ")
+                st.error("Error generating image ❌")
                 st.exception(e)
     else:
-        st.warning("Please enter both Product and Audience ")
+        st.warning("Please enter a prompt")
 
-# Show & Download Content
-if "text" in st.session_state:
-    content = st.text_area("Generated Content", st.session_state.text, height=300)
+# Download option
+if "image" in st.session_state:
+    st.markdown("### Download Image")
 
-    st.download_button(
-        label="⬇️ Download as TXT",
-        data=content,
-        file_name="marketing_copy.txt",
-        mime="text/plain"
-    )
-else:
-    st.info("Generate content first")
+    st.markdown(f"[Click here to download]({st.session_state.image})")
