@@ -22,105 +22,95 @@ def save_chats(chats):
 st.set_page_config(page_title="Genz_AI", layout="wide")
 
 # ---------------- YOUR CSS (IMPROVED) ----------------
-st.markdown("""
-<style>
-
-/* MAIN BACKGROUND */
-.stApp {
-    background-color: #F7F7F8;
-}
-
-/* SIDEBAR */
+/* SIDEBAR BASE */
 [data-testid="stSidebar"] {
-    background-color: #202123;
-    padding: 20px 10px;
+    background: linear-gradient(180deg, #111827, #0B0F19);
+    padding: 20px 12px;
+    border-right: 1px solid rgba(255,255,255,0.05);
 }
 
-/* SIDEBAR TEXT */
-[data-testid="stSidebar"] * {
-    color: #FFFFFF;
+/* APP TITLE */
+[data-testid="stSidebar"] h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #F9FAFB;
+    margin-bottom: 20px;
 }
 
-/* BUTTONS */
-.stButton>button {
+/* SECTION TITLE */
+[data-testid="stSidebar"] h3 {
+    font-size: 13px;
+    color: #9CA3AF;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* BUTTON BASE */
+.stButton > button {
     width: 100%;
-    border-radius: 8px;
-    background-color: #2A2B32;
-    color: white;
-    border: none;
-    padding: 10px;
-    transition: 0.3s;
+    border-radius: 10px;
+    background: #1F2937;
+    color: #E5E7EB;
+    border: 1px solid transparent;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 14px;
+    transition: all 0.25s ease;
 }
 
 /* BUTTON HOVER */
-.stButton>button:hover {
-    background-color: #FF6A00;
+.stButton > button:hover {
+    background: #374151;
+    border: 1px solid #4B5563;
+    transform: translateX(2px);
+}
+
+/* ACTIVE CHAT STYLE */
+.stButton > button:focus {
+    background: #2563EB !important;
+    color: white !important;
+    border: none;
+}
+
+/* NEW CHAT BUTTON SPECIAL */
+.stButton:first-child > button {
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
     color: white;
+    font-weight: 500;
+    text-align: center;
 }
 
-/* CHAT TITLE */
-.chat-title {
-    font-size: 22px;
-    font-weight: bold;
-    color: #111;
-    margin-bottom: 10px;
+.stButton:first-child > button:hover {
+    background: linear-gradient(135deg, #1D4ED8, #1E40AF);
 }
 
-/* CHAT AREA CENTER */
-.block-container {
-    max-width: 900px;
-    margin: auto;
-    padding-bottom: 120px;
+/* CHAT ROW (FIX ICON ALIGNMENT) */
+[data-testid="stSidebar"] .stColumns {
+    align-items: center;
 }
 
-/* CHAT MESSAGES */
-[data-testid="stChatMessage"] {
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 8px;
+/* ICON BUTTONS (EDIT / DELETE) */
+[data-testid="stSidebar"] button[kind="secondary"] {
+    padding: 6px !important;
+    border-radius: 8px !important;
+    background: transparent !important;
 }
 
-/* USER MESSAGE */
-[data-testid="stChatMessage"][data-testid*="user"] {
-    background-color: #E8E8E8;
-    color: black;
-}
-
-/* ASSISTANT MESSAGE */
-[data-testid="stChatMessage"][data-testid*="assistant"] {
-    background-color: #FFFFFF;
-    color: black;
-}
-
-/* FLOATING INPUT */
-section[data-testid="stChatInput"] {
-    position: fixed;
-    bottom: 10px;
-    left: 300px;
-    right: 20px;
-    background: white;
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
-}
-
-/* INPUT */
-textarea {
-    border-radius: 10px !important;
+[data-testid="stSidebar"] button[kind="secondary"]:hover {
+    background: #374151 !important;
 }
 
 /* SCROLLBAR */
-::-webkit-scrollbar {
-    width: 6px;
+[data-testid="stSidebar"] ::-webkit-scrollbar {
+    width: 5px;
 }
-::-webkit-scrollbar-thumb {
-    background: #888;
+
+[data-testid="stSidebar"] ::-webkit-scrollbar-thumb {
+    background: #4B5563;
     border-radius: 10px;
 }
-
-</style>
-""", unsafe_allow_html=True)
-
 # ---------------- INIT ----------------
 client = Groq(api_key=st.secrets["app2"])
 
